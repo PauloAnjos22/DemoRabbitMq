@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.API", "UserService.API.csproj", "{EC9DD1E7-7CCC-4653-9866-956814E8FEE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Infrastructure", "..\UserService.Infrastructure\UserService.Infrastructure.csproj", "{10A1DE43-100E-4416-A1D5-87F65863B4C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Application", "..\UserService.Application\UserService.Application.csproj", "{C5119292-CE9E-4317-90DD-236B19416461}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{EC9DD1E7-7CCC-4653-9866-956814E8FEE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC9DD1E7-7CCC-4653-9866-956814E8FEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC9DD1E7-7CCC-4653-9866-956814E8FEE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10A1DE43-100E-4416-A1D5-87F65863B4C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10A1DE43-100E-4416-A1D5-87F65863B4C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10A1DE43-100E-4416-A1D5-87F65863B4C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10A1DE43-100E-4416-A1D5-87F65863B4C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5119292-CE9E-4317-90DD-236B19416461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5119292-CE9E-4317-90DD-236B19416461}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5119292-CE9E-4317-90DD-236B19416461}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5119292-CE9E-4317-90DD-236B19416461}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
