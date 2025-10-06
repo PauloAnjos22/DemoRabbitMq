@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using UserService.Application.DTOs;
 
 namespace UserService.Application.Interfaces
 {
-    internal interface IMessagePublisher
+    public interface IMessagePublisher
     {
+        public Task<ResultResponse> PublishAsync(); // send events to RabbitMQ (but what this method receive on his parameters?)
     }
 }
