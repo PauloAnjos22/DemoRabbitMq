@@ -1,6 +1,6 @@
 ﻿namespace UserService.Application.DTOs
 {
-    public class PaymentDto
+    public class CreatePaymentDto
     {
         public Guid From { get; set; }
         public Guid To { get; set; }

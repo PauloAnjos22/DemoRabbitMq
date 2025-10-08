@@ -1,9 +1,10 @@
 ﻿using UserService.Application.DTOs;
+using UserService.Domain.Events;
 
 namespace UserService.Application.Interfaces
 {
     public interface IMessagePublisher
     {
-        Task<ResultResponse> PublishAsync(); // send events to RabbitMQ (but what this method receive on his parameters?)
+        Task<bool> PublishAsync(UserPaymentEvent request); // send events to RabbitMQ (but what this method receive on his parameters?)
     }
 }
