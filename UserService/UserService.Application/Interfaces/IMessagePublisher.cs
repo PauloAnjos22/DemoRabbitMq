@@ -4,6 +4,6 @@ namespace UserService.Application.Interfaces
 {
     public interface IMessagePublisher
     {
-        public Task<ResultResponse> PublishAsync(); // send events to RabbitMQ (but what this method receive on his parameters?)
+        Task<ResultResponse> PublishAsync(); // send events to RabbitMQ (but what this method receive on his parameters?)
     }
 }

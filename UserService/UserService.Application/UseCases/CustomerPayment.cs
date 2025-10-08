@@ -1,21 +1,24 @@
 ﻿using AutoMapper;
 using UserService.Application.DTOs;
 using UserService.Application.Interfaces;
+using UserService.Domain.Entities;
 
 namespace UserService.Application.UseCases
 {
-    public class Payment : IPaymentUseCase
+    public class CustomerPayment : ICustomerPaymentUseCase
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly IMapper _mapper;
+        private readonly IPaymentRepository _paymentRepository;
 
-        public Payment(ICustomerRepository customerRepository, IMapper mapper)
+        public CustomerPayment(ICustomerRepository customerRepository, IMapper mapper, IPaymentRepository paymentRepository)
         {
             _customerRepository = customerRepository;
             _mapper = mapper;
+            _paymentRepository = paymentRepository;
         }
 
-        public async Task<ResultResponse> ProcessPayment(PaymentDto request)
+        public async Task<ResultResponse> ProcessPayment(CreatePaymentDto request)
         {
             if(request == null)
             {
@@ -38,7 +41,19 @@ namespace UserService.Application.UseCases
                 return ResultResponse.Fail("Cliente de destino não encontrado");
             }
 
+            var payment = new Payment();
+            payment.Id = Guid.NewGuid();
+            payment.From = request.From;
+            payment.To = request.To;
+            payment.Amount = request.Amount;
+            payment.Method = request.Method;
+            payment.CreatedAt = DateTime.Now;
 
+            var insertPayment = await _paymentRepository.SaveAsync(payment);
+            if (!insertPayment)
+            {
+                return ResultResponse.Fail("Falha ao salvar a transação");
+            }
         }
     }
 }

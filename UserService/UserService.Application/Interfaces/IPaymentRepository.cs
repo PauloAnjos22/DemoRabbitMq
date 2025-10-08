@@ -3,8 +3,8 @@ using UserService.Domain.Entities;
 
 namespace UserService.Application.Interfaces
 {
-    public interface ICustomerRepository
+    public interface IPaymentRepository
     {
-        Task<Customer?> FindCustomerAsync(Guid customer);
+        Task<bool> SaveAsync(Payment payment);
     }
 }
