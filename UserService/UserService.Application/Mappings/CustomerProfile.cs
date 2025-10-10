@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using UserService.Application.DTOs;
+using UserService.Application.DTOs.Customer;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.Mappings
@@ -8,6 +8,7 @@ namespace UserService.Application.Mappings
     {
         public CustomerProfile() {
             CreateMap<Customer, CustomerDto>().ReverseMap();
+            CreateMap<Customer, CreateCustomerDto>().ReverseMap();
         }    
     }
 }

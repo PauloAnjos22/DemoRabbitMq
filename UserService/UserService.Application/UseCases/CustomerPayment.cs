@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
-using UserService.Application.DTOs;
-using UserService.Application.Interfaces;
+using UserService.Application.DTOs.Common;
+using UserService.Application.DTOs.Payment;
+using UserService.Application.Interfaces.Messaging;
+using UserService.Application.Interfaces.Repositories;
+using UserService.Application.Interfaces.UseCases;
 using UserService.Domain.Entities;
 using UserService.Domain.Events;
 
 namespace UserService.Application.UseCases
 {
-    public class CustomerPayment : ICustomerPaymentUseCase
+    public class CustomerPayment : IEventPayment
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly IMapper _mapper;
@@ -32,13 +35,13 @@ namespace UserService.Application.UseCases
                 return ResultResponse.Fail("Valor inválido de transação");
             }
 
-            var customerFrom = await _customerRepository.FindCustomerAsync(request.From);
+            var customerFrom = await _customerRepository.FindByIdAsync(request.From);
             if (customerFrom == null)
             {
                 return ResultResponse.Fail("Cliente de origem não encontrado");
             }
 
-            var customerTo = await _customerRepository.FindCustomerAsync(request.To);
+            var customerTo = await _customerRepository.FindByIdAsync(request.To);
             if (customerTo == null)
             {
                 return ResultResponse.Fail("Cliente de destino não encontrado");
