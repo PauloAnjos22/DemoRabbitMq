@@ -3,8 +3,8 @@ using UserService.Application.DTOs.Customer;
 
 namespace UserService.Application.Interfaces.UseCases
 {
-    public class ICustomerRegister
+    public interface IRegisterCustomer
     {
-        Task<ResultResponse> RegisterCustomerAsync(RegisterCustomerDto request);
+        Task<ResultResponse> RegisterCustomerAsync(CreateCustomerDto request);
     }
 }

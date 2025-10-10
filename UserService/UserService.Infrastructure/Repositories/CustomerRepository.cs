@@ -40,5 +40,11 @@ namespace UserService.Infrastructure.Repositories
             await _context.Customers.AddAsync(customer);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<IEnumerable<Customer>> GetAllAsync()
+        {
+            var customers = await _context.Customers.ToListAsync();
+            return customers;
+        }
     }
 }

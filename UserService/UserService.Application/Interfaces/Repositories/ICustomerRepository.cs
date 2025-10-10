@@ -8,5 +8,6 @@ namespace UserService.Application.Interfaces.Repositories
         Task<Customer?> FindByIdAsync(Guid customer);
         Task<bool> ExistsByEmailAsync(string email);
         Task<bool> AddAsync(Customer customer);
+        Task<IEnumerable<Customer>> GetAllAsync();
     }
 }

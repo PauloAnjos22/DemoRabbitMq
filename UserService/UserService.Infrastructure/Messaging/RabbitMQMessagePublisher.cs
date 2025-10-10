@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using UserService.Application.DTOs;
-using UserService.Application.Interfaces;
+using UserService.Application.Interfaces.Messaging;
 using UserService.Domain;
 using UserService.Domain.Events;
 

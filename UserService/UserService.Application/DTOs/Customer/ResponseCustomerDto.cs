@@ -1,6 +1,6 @@
-﻿namespace UserService.Application.DTOs
+﻿namespace UserService.Application.DTOs.Customer
 {
-    public class CustomerDto
+    public class ResponseCustomerDto
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }

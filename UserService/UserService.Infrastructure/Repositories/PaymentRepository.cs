@@ -1,4 +1,4 @@
-﻿using UserService.Application.Interfaces;
+﻿using UserService.Application.Interfaces.Repositories;
 using UserService.Domain.Entities;
 using UserService.Infrastructure.Persistence;
 

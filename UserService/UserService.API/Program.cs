@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using UserService.Application.Interfaces;
+using UserService.Application.Interfaces.Messaging;
+using UserService.Application.Interfaces.Repositories;
+using UserService.Application.Interfaces.UseCases;
 using UserService.Application.Mappings;
 using UserService.Application.UseCases;
 using UserService.Domain.Entities;
@@ -23,7 +25,7 @@ builder.Services.AddDbContext<AppServiceDbContext>
         )
     );
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<ICustomerPaymentUseCase, CustomerPayment>();
+builder.Services.AddScoped<IEventPayment, CustomerPayment>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IMessagePublisher, RabbitMQMessagePublisher>();
 builder.Services.AddAutoMapper(cfg =>

@@ -7,7 +7,7 @@ namespace UserService.Application.Mappings
     public class CustomerProfile : Profile 
     {
         public CustomerProfile() {
-            CreateMap<Customer, CustomerDto>().ReverseMap();
+            CreateMap<Customer, ResponseCustomerDto>().ReverseMap();
             CreateMap<Customer, CreateCustomerDto>().ReverseMap();
         }    
     }

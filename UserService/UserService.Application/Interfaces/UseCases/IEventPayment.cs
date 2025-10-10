@@ -1,8 +1,9 @@
-﻿using UserService.Application.DTOs;
+﻿using UserService.Application.DTOs.Common;
+using UserService.Application.DTOs.Payment;
 
-namespace UserService.Application.Interfaces
+namespace UserService.Application.Interfaces.UseCases
 {
-    public interface ICustomerPaymentUseCase
+    public interface IEventPayment
     {
         Task<ResultResponse> ProcessPayment(CreatePaymentDto request); // creates payment entity and publishes UserPaymentEvent
     }

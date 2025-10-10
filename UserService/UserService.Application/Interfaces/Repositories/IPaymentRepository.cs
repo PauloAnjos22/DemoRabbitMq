@@ -1,7 +1,7 @@
 ﻿using UserService.Application.DTOs;
 using UserService.Domain.Entities;
 
-namespace UserService.Application.Interfaces
+namespace UserService.Application.Interfaces.Repositories
 {
     public interface IPaymentRepository
     {
