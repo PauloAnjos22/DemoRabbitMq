@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using UserService.Application.Interfaces.Messaging;
 using UserService.Application.Interfaces.Repositories;
+using UserService.Application.Interfaces.Services;
 using UserService.Application.Interfaces.UseCases;
 using UserService.Application.Mappings;
 using UserService.Application.UseCases;
@@ -8,6 +9,7 @@ using UserService.Domain.Entities;
 using UserService.Infrastructure.Messaging;
 using UserService.Infrastructure.Persistence;
 using UserService.Infrastructure.Repositories;
+using UserService.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,10 +32,13 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IMessagePublisher, RabbitMQMessagePublisher>();
 builder.Services.AddScoped<IRegisterCustomer, RegisterCustomer>();
 builder.Services.AddScoped<IGetCustomers, GetAllCustomers>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddProfile<CustomerProfile>();
 });
+// Add RabbitMQ Consumer (Background Service)
+builder.Services.AddHostedService<EmailNotificationConsumer>();
 
 var app = builder.Build();
 
