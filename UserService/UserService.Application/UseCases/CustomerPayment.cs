@@ -28,7 +28,7 @@ namespace UserService.Application.UseCases
         {
             if(request == null)
             {
-                return ResultResponse.Fail("Invalid request");
+                return ResultResponse.Fail("Dados inválidos");
             }
 
             if (request.Amount < 0) {

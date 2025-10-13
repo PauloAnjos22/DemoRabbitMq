@@ -28,6 +28,8 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IEventPayment, CustomerPayment>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IMessagePublisher, RabbitMQMessagePublisher>();
+builder.Services.AddScoped<IRegisterCustomer, RegisterCustomer>();
+builder.Services.AddScoped<IGetCustomers, GetAllCustomers>();
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddProfile<CustomerProfile>();

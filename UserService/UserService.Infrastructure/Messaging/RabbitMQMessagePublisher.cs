@@ -29,16 +29,16 @@ namespace UserService.Infrastructure.Messaging
             //5. Encoding.UTF8: Convert string to bytes for RabbitMQ
 
             //Think About: What do you need to connect to RabbitMQ?
-            //- Server address(localhost for learning)
-            //- Username/password(guest/guest default)
-            //- Queue name(pick something like "payment-events")
+            //- Server address
+            //- Username/password
+            //- Queue name
             try
             {
                 // RabbitMQMessagePublisher Implementation Step 2
                 var factory = new ConnectionFactory() // Key RabbitMQ Classes 1
 
                 {
-                    HostName = "localhost",
+                    HostName = "rabbitmq", // Worked only when I changed to my rabbitMq docker container name!
                     UserName = "guest",
                     Password = "guest"
                 };

@@ -4,3 +4,29 @@ GET {{UserService.API_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+POST {{UserService.API_HostAddress}}/api/customer
+Content-Type: application/json
+
+{
+  "Name": "indio pereira",
+  "Email": "poatan@gmail.com"
+}
+
+###
+
+GET {{UserService.API_HostAddress}}/api/customer
+
+###
+
+POST {{UserService.API_HostAddress}}/api/payment
+Content-Type: application/json
+
+{
+  "From": "645da9dc-75b2-4d14-e8b3-08de09db58a9",
+  "To": "13b6e750-99fe-4951-e8b4-08de09db58a9",
+  "Amount": 1000,
+  "Method": "CreditCard"
+}
+
+###
