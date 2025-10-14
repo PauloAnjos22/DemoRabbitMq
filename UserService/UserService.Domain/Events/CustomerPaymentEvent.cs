@@ -1,6 +1,6 @@
 ﻿namespace UserService.Domain.Events
 {
-    public class UserPaymentEvent
+    public class CustomerPaymentEvent
     {
         public Guid TransactionId { get; init; }
         public Guid AccountFrom { get; init; }
@@ -10,7 +10,7 @@
         public int PaymentAmount { get; init; }
         public DateTime Created { get; init; }
 
-        public UserPaymentEvent(Guid transactionId, Guid accountFrom, Guid accountTo, string? paymentMethod, int paymentAmount)
+        public CustomerPaymentEvent(Guid transactionId, Guid accountFrom, Guid accountTo, string? paymentMethod, int paymentAmount)
         {
             TransactionId = transactionId;
             AccountFrom = accountFrom;

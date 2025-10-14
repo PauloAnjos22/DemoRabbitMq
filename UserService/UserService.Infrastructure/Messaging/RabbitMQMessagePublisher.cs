@@ -8,7 +8,7 @@ namespace UserService.Infrastructure.Messaging
 {
     public class RabbitMQMessagePublisher : IMessagePublisher
     {
-        public async Task<bool> PublishAsync(UserPaymentEvent request)
+        public async Task<bool> PublishAsync(CustomerPaymentEvent request)
         {
             //RabbitMQMessagePublisher Implementation Steps:
             //1.Add RabbitMQ using statements

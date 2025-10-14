@@ -61,7 +61,7 @@ namespace UserService.Application.UseCases
                 return ResultResponse.Fail("Falha ao salvar a transação");
             }
 
-            var paymentEvent = new UserPaymentEvent(payment.Id, payment.From, payment.To, payment.Method, payment.Amount);
+            var paymentEvent = new CustomerPaymentEvent(payment.Id, payment.From, payment.To, payment.Method, payment.Amount);
             var publishResult = await _messagePublisher.PublishAsync(paymentEvent);
 
             if (!publishResult)
