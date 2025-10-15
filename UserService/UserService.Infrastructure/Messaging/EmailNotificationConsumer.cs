@@ -55,6 +55,8 @@ namespace UserService.Infrastructure.Messaging
                 return;
             }
 
+            _logger.LogInformation("Waiting 15 seconds before starting consumer...");
+            await Task.Delay(15000, stoppingToken); 
             var consumer = new AsyncEventingBasicConsumer(_channel);
 
             consumer.ReceivedAsync += async (model, ea) =>
@@ -65,6 +67,7 @@ namespace UserService.Infrastructure.Messaging
                     var message = Encoding.UTF8.GetString(body);
 
                     _logger.LogInformation("Received payment event: {Message}", message);
+                    await Task.Delay(10000); // 10000 = 10 segundos
 
                     // Deserialize the payment event
                     var paymentEvent = JsonSerializer.Deserialize<CustomerPaymentEvent>(message);

@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver-container
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=StrongPassword123!
+    ports:
+      - "1433:1433"
+    networks:
+      - app-network
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"    # AMQP port
+      - "15672:15672"  # Management UI
+    networks:
+      - app-network
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  # Your API Service
+  userservice-api:
+    build:
+      context: ./UserService
+      dockerfile: UserService.API/Dockerfile
+    container_name: userservice-container
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver-container,1433;Database=RabbitMQDemoAPI;User Id=sa;Password=StrongPassword123!;TrustServerCertificate=True;
+
+  # NEW - Email Worker Service
+  email-worker:
+    build:
+      context: ./UserService
+      dockerfile: UserService.EmailWorker/Dockerfile
+    container_name: email-worker-container
+    networks:
+      - app-network
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver-container,1433;Database=RabbitMQDemoAPI;User Id=sa;Password=StrongPassword123!;TrustServerCertificate=True;
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  sqlserver-data:
+  rabbitmq-data:

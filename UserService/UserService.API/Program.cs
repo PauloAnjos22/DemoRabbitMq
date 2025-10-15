@@ -5,7 +5,6 @@ using UserService.Application.Interfaces.Services;
 using UserService.Application.Interfaces.UseCases;
 using UserService.Application.Mappings;
 using UserService.Application.UseCases;
-using UserService.Domain.Entities;
 using UserService.Infrastructure.Messaging;
 using UserService.Infrastructure.Persistence;
 using UserService.Infrastructure.Repositories;
@@ -13,10 +12,7 @@ using UserService.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -37,12 +33,25 @@ builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddProfile<CustomerProfile>();
 });
-// Add RabbitMQ Consumer (Background Service)
-builder.Services.AddHostedService<EmailNotificationConsumer>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppServiceDbContext>();
+        context.Database.Migrate(); 
+        app.Logger.LogInformation("Database migrations applied successfully");
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "An error occurred while migrating the database");
+        throw; 
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
