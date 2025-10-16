@@ -21,4 +21,4 @@ bld/
 packages/
 
 # Configuration files
-appsettings.Development.json
+UserService/UserService.API/appsettings.Development.json
