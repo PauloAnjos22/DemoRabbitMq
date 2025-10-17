@@ -9,8 +9,8 @@ POST {{UserService.API_HostAddress}}/api/customer
 Content-Type: application/json
 
 {
-  "Name": "indio pereira",
-  "Email": "poatan@gmail.com"
+  "Name": "Moicanso",
+  "Email": "moicanso@gmail.com"
 }
 
 ###
@@ -23,8 +23,8 @@ POST {{UserService.API_HostAddress}}/api/payment
 Content-Type: application/json
 
 {
-  "From": "645da9dc-75b2-4d14-e8b3-08de09db58a9",
-  "To": "13b6e750-99fe-4951-e8b4-08de09db58a9",
+  "From": "2AAA0DC8-90D5-4690-5D30-08DE0C30673D",
+  "To": "7C7DD0AB-0F03-420C-5D31-08DE0C30673D",
   "Amount": 1000,
   "Method": "CreditCard"
 }

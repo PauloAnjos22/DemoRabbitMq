@@ -5,6 +5,7 @@ using UserService.Application.Interfaces.Services;
 using UserService.Application.Interfaces.UseCases;
 using UserService.Application.Mappings;
 using UserService.Application.UseCases;
+using UserService.Infrastructure.Configuration;
 using UserService.Infrastructure.Messaging;
 using UserService.Infrastructure.Persistence;
 using UserService.Infrastructure.Repositories;
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IMessagePublisher, RabbitMQMessagePublisher>();
 builder.Services.AddScoped<IRegisterCustomer, RegisterCustomer>();
 builder.Services.AddScoped<IGetCustomers, GetAllCustomers>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddProfile<CustomerProfile>();
