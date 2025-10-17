@@ -1,7 +1,7 @@
-﻿using MailKit.Security;
+﻿using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using MimeKit;
-using System.Net.Mail;
 using UserService.Application.DTOs.Common;
 using UserService.Application.Interfaces.Repositories;
 using UserService.Application.Interfaces.Services;
@@ -38,35 +38,65 @@ namespace UserService.Infrastructure.Services
                 return ResultResponse.Fail("Customer not found");
             }
 
-            var email = new MimeMessage();
-            email.From.Add(new MailboxAddress(_mailSettings.FromName, _mailSettings.From));
-            email.To.Add(MailboxAddress.Parse(customerTo.Email));
-            email.Subject = "Payment Confirmation";
-            email.Body = new TextPart("plain")
+            var messageToReceiver = new MimeMessage();
+            messageToReceiver.From.Add(new MailboxAddress(_mailSettings.FromName, _mailSettings.From));
+            messageToReceiver.To.Add(MailboxAddress.Parse(customerTo.Email));
+            messageToReceiver.Subject = "Payment Confirmation";
+            messageToReceiver.Body = new TextPart("plain")
             {
                 Text = $"{customerFrom.Name} te enviou um pagamento de R${paymentEvent.PaymentAmount}"
+            };
+
+            var messageToSender = new MimeMessage();
+            messageToSender.From.Add(new MailboxAddress(_mailSettings.FromName, _mailSettings.From));
+            messageToSender.To.Add(MailboxAddress.Parse(customerFrom.Email));
+            messageToSender.Subject = "Payment Confirmation";
+            messageToSender.Body = new TextPart("plain")
+            {
+                Text = $"Olá, {customerFrom.Name}!<br> O seu pagamento no valor de R${paymentEvent.PaymentAmount} para {customerTo.Name} foi enviado com sucesso!"
             };
 
             using var smtp = new SmtpClient();
             try
             {
                 await smtp.ConnectAsync(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-                await smtp.AuthenticateAsync(_mailSettings.User, _mailSettings.Pass);
-                await smtp.SendAsync(email);
+                if (!string.IsNullOrWhiteSpace(_mailSettings.User))
+                {
+                    await smtp.AuthenticateAsync(_mailSettings.User, _mailSettings.Pass);
+                }
+                
+                var errorList = new List<string>();
 
-                _logger.LogInformation("Email sent successfully to {Email} for payment {TransactionId}",
-                    customerTo.Email, paymentEvent.TransactionId);
+                try
+                {
+                    await smtp.SendAsync(messageToReceiver);
+                    _logger.LogInformation("Email sent to receiver {Email} for payment {TransactionId}", customerTo.Email, paymentEvent.TransactionId);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError("Failed to send email to receiver {Email}", customerTo.Email);
+                    errorList.Add($"Receiver: {ex.Message}");
+                }
 
-                return ResultResponse.Ok();
+                try
+                {
+                    await smtp.SendAsync(messageToSender);
+                    _logger.LogInformation("Email sent to sender {Email} for payment {TransactionId}", customerFrom.Email, paymentEvent.TransactionId);
+                }catch(Exception ex)
+                {
+                    _logger.LogError("Failed to send email to sender {Email}", customerFrom.Email);
+                    errorList.Add($"Sender: {ex.Message}");
+                }
+                
+                if(errorList.Count == 0) 
+                    return ResultResponse.Ok();
+
+                return ResultResponse.Fail($"{errorList}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error sending email to {Email}", customerTo.Email);
-                return ResultResponse.Fail($"Error sending email: {ex.Message}");
-            }
-            finally
-            {
-                await smtp.DisconnectAsync(true);
+                _logger.LogError(ex, "Error when sending payment emails for transaction {TransactionId}", paymentEvent.TransactionId);
+                return ResultResponse.Fail($"SMTP error: {ex.Message}");
             }
         }
 
