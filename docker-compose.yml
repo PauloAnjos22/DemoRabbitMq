@@ -7,7 +7,7 @@ services:
     container_name: sqlserver-container
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=StrongPassword123!
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
     ports:
       - "1433:1433"
     networks:
@@ -58,7 +58,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=sqlserver-container,1433;Database=RabbitMQDemoAPI;User Id=sa;Password=StrongPassword123!;TrustServerCertificate=True;
-
+      - MailSettings__Host=sandbox.smtp.mailtrap.io
+      - MailSettings__Port=2525
+      - MailSettings__User=${MAILTRAP_USER}  
+      - MailSettings__Pass=${MAILTRAP_PASS}
+      - MailSettings__From=noreply@yourapp.com
+      - MailSettings__FromName=UserService Payment System
 networks:
   app-network:
     driver: bridge

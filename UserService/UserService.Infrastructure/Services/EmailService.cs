@@ -1,6 +1,7 @@
 ﻿using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MimeKit;
 using UserService.Application.DTOs.Common;
 using UserService.Application.Interfaces.Repositories;
@@ -17,11 +18,11 @@ namespace UserService.Infrastructure.Services
         private readonly ICustomerRepository _repository;
         private readonly MailSettings _mailSettings;
 
-        public EmailService(ILogger<EmailService> logger, ICustomerRepository repository, MailSettings mailSettings)
+        public EmailService(ILogger<EmailService> logger, ICustomerRepository repository, IOptions<MailSettings> mailSettings)
         {
             _logger = logger;
             _repository = repository;
-            _mailSettings = mailSettings;
+            _mailSettings = mailSettings.Value;
         }
 
         public async Task<ResultResponse> PaymentConfirmationAsync(CustomerPaymentEvent paymentEvent)
@@ -30,10 +31,38 @@ namespace UserService.Infrastructure.Services
                 return ResultResponse.Fail("paymentEvent request is incorrect");
             }
 
+            if (string.IsNullOrWhiteSpace(_mailSettings?.From))
+            {
+                _logger.LogError("MailSettings.From is not configured");
+                return ResultResponse.Fail("MailSettings.From is not configured");
+            }
+
             var customerFrom = await _repository.FindByIdAsync(paymentEvent.AccountFrom);
             var customerTo = await _repository.FindByIdAsync(paymentEvent.AccountTo);
 
-            if(customerFrom == null || customerTo == null)
+            // inside PaymentConfirmationAsync, just after retrieving customerFrom and customerTo
+            _logger.LogDebug("MailSettings.From='{From}', FromName='{FromName}'", _mailSettings?.From, _mailSettings?.FromName);
+            _logger.LogDebug("CustomerFrom.Id={Id} CustomerFrom.Email='{Email}'", customerFrom?.Id, customerFrom?.Email);
+            _logger.LogDebug("CustomerTo.Id={Id} CustomerTo.Email='{Email}'", customerTo?.Id, customerTo?.Email);
+
+            // keep the existing defensive checks — they will stop MimeKit from receiving nulls
+            if (string.IsNullOrWhiteSpace(_mailSettings?.From))
+            {
+                _logger.LogError("MailSettings.From is not configured");
+                return ResultResponse.Fail("MailSettings.From is not configured");
+            }
+            if (string.IsNullOrWhiteSpace(customerFrom?.Email))
+            {
+                _logger.LogWarning("CustomerFrom has no email: {CustomerId}", customerFrom?.Id);
+                return ResultResponse.Fail("Missing email for sender");
+            }
+            if (string.IsNullOrWhiteSpace(customerTo?.Email))
+            {
+                _logger.LogWarning("CustomerTo has no email: {CustomerId}", customerTo?.Id);
+                return ResultResponse.Fail("Missing email for receiver");
+            }
+
+            if (customerFrom == null || customerTo == null)
             {
                 return ResultResponse.Fail("Customer not found");
             }

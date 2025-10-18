@@ -22,3 +22,7 @@ packages/
 
 # Configuration files
 UserService/UserService.API/appsettings.Development.json
+UserService/UserService.EmailWorker/appsettings.Development.json
+**/appsettings.Development.json
+# .env 
+.env
