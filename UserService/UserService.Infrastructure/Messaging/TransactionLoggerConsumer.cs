@@ -6,6 +6,7 @@ using RabbitMQ.Client.Events;
 using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
+using UserService.Application.Interfaces.Repositories;
 using UserService.Application.Interfaces.Services;
 using UserService.Domain.Entities;
 using UserService.Domain.Events;
@@ -71,7 +72,7 @@ namespace UserService.Infrastructure.Messaging
                     if (transactionEvent != null)
                     {
                         using var scope = _scopeFactory.CreateScope();
-                        var loggerService = scope.ServiceProvider.GetRequiredService<ITransactionLoggerService>();
+                        var logRepository = scope.ServiceProvider.GetRequiredService<ITransactionLogRepository>();
                         var logEntry = new TransactionLog
                         {
                             TransactionId = transactionEvent.TransactionId,
@@ -83,12 +84,23 @@ namespace UserService.Infrastructure.Messaging
                             Status = transactionEvent.Status ?? "Completed",
                             LoggedAt = DateTime.UtcNow
                         };
-                        await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
+                        var saved = await logRepository.saveAsync(logEntry);
+
+                        if (saved)
+                        {
+                            _logger.LogInformation("Transaction {TransactionId} logged successfully", transactionEvent.TransactionId);
+                            await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
+                        }
+                        else
+                        {
+                            _logger.LogWarning("Failed to log transaction {TransactionId}", transactionEvent.TransactionId);
+                            await _channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: true);
+                        }
                     }
                     else
                     {
-                        _logger.LogWarning("TransactionLogger received non-payment message");
-                        await _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: false);
+                        _logger.LogWarning("Received invalid transaction event");
+                        await _channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: false);
                     }
                 }
                 catch (Exception ex)

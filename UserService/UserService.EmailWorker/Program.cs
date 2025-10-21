@@ -19,6 +19,7 @@ builder.Services.AddDbContext<AppServiceDbContext>(
 
 // Register repositories required by EmailService
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ITransactionLogRepository, TransactionLogRepository>();
 
 // Register email service and consumers
 builder.Services.AddScoped<IEmailService, EmailService>();
