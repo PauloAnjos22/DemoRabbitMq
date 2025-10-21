@@ -8,69 +8,45 @@ namespace UserService.Infrastructure.Messaging
 {
     public class RabbitMQMessagePublisher : IMessagePublisher
     {
+        private const string ExchangeName = "payment-exchange";
         public async Task<bool> PublishAsync(CustomerPaymentEvent request)
         {
-            //RabbitMQMessagePublisher Implementation Steps:
-            //1.Add RabbitMQ using statements
-            //2.Create connection factory and connection
-            //3.Create channel for communication
-            //4.Declare queue(create if doesn't exist)
-            //5.Serialize UserPaymentEvent to JSON
-            //6.Publish message to queue
-            //7.Handle errors and return success / failure
-
-            //Key RabbitMQ Classes to Use:
-            //1. ConnectionFactory: Creates connections
-            //2. IConnection: Represents connection to RabbitMQ
-            //3. IModel: Represents channel for communication
-            //4. JsonSerializer: Convert event to JSON string
-            //5. Encoding.UTF8: Convert string to bytes for RabbitMQ
-
-            //Think About: What do you need to connect to RabbitMQ?
-            //- Server address
-            //- Username/password
-            //- Queue name
             try
             {
-                // RabbitMQMessagePublisher Implementation Step 2
-                var factory = new ConnectionFactory() // Key RabbitMQ Classes 1
-
+                var factory = new ConnectionFactory
                 {
-                    HostName = "rabbitmq", // Worked only when I changed to my rabbitMq docker container name!
+                    HostName = "rabbitmq",
                     UserName = "guest",
                     Password = "guest"
                 };
 
-                // RabbitMQMessagePublisher Implementation Step 3
-                await using var connection = await factory.CreateConnectionAsync(); // Key RabbitMQ Classes 2
-                using var channel = await connection.CreateChannelAsync();
+                // Cria conexão assíncrona
+                await using var connection = await factory.CreateConnectionAsync();
+                await using var channel = await connection.CreateChannelAsync();
 
-                // RabbitMQMessagePublisher Implementation Step 4
-                string queueName = "payment-events";
-                await channel.QueueDeclareAsync(queue: queueName,
-                                   durable: true,      
-                                   exclusive: false,   
-                                   autoDelete: false,  
-                                   arguments: null);
+                // Declare exchange
+                await channel.ExchangeDeclareAsync(exchange: ExchangeName,
+                                                  type: ExchangeType.Fanout,
+                                                  durable: true,
+                                                  autoDelete: false,
+                                                  arguments: null);
 
-                // RabbitMQMessagePublisher Implementation Step 5
-                string jsonMessage = JsonSerializer.Serialize(request); // Key RabbitMQ Classes to Use 4
-                var body = Encoding.UTF8.GetBytes(jsonMessage); // Key RabbitMQ Classes to Use 5
+                var jsonMessage = JsonSerializer.Serialize(request);
+                var body = Encoding.UTF8.GetBytes(jsonMessage);
 
                 var properties = new BasicProperties();
                 properties.Persistent = false;
 
-                // RabbitMQMessagePublisher Implementation Step 6
-                await channel.BasicPublishAsync(
-                    exchange: string.Empty,          
-                    routingKey: queueName,
-                    mandatory: false,
-                    basicProperties: properties,
-                    body: body
-                );
+                // Publish
+                await channel.BasicPublishAsync(exchange: ExchangeName,
+                                                routingKey: string.Empty,
+                                                mandatory: false,
+                                                basicProperties: properties,
+                                                body: body);
+
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }

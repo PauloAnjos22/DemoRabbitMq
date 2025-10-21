@@ -3,25 +3,29 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
 using UserService.Application.Interfaces.Services;
 using UserService.Domain.Events;
+
 namespace UserService.Infrastructure.Messaging
 {
-    public class EmailNotificationConsumer : BackgroundService
+    public class TransactionLoggerConsumer : BackgroundService
     {
-        private readonly ILogger<EmailNotificationConsumer> _logger;
+        private readonly ILogger<TransactionLoggerConsumer> _logger;
         private IConnection? _connection;
         private IChannel? _channel;
         private readonly IServiceScopeFactory _scopeFactory;
         private const string ExchangeName = "payment-exchange";
-        private const string QueueName = "payment-emails";
+        private const string QueueName = "payment-logs";
 
-        public EmailNotificationConsumer(ILogger<EmailNotificationConsumer> logger, IServiceScopeFactory scopeFactory)
+        private static readonly ConcurrentBag<CustomerPaymentEvent> _logs = new();
+
+        public TransactionLoggerConsumer(ILogger<TransactionLoggerConsumer> logger, IServiceScopeFactory scopeFactory)
         {
             _logger = logger;
-            _scopeFactory = scopeFactory; 
+            _scopeFactory = scopeFactory;
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)
@@ -41,7 +45,7 @@ namespace UserService.Infrastructure.Messaging
             await _channel.QueueDeclareAsync(queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
             await _channel.QueueBindAsync(queue: QueueName, exchange: ExchangeName, routingKey: string.Empty);
 
-            _logger.LogInformation("EmailNotificationConsumer connected and bound to exchange {Exchange} queue {Queue}", ExchangeName, QueueName);
+            _logger.LogInformation("TransactionLoggerConsumer connected and bound to exchange {Exchange} queue {Queue}", ExchangeName, QueueName);
 
             await base.StartAsync(cancellationToken);
         }
@@ -54,60 +58,37 @@ namespace UserService.Infrastructure.Messaging
                 return;
             }
 
-            _logger.LogInformation("Waiting 15 seconds before starting consumer...");
-            await Task.Delay(15000, stoppingToken); 
-
             var consumer = new AsyncEventingBasicConsumer(_channel);
-
             consumer.ReceivedAsync += async (model, ea) =>
             {
                 try
                 {
-                    var body = ea.Body.ToArray();
-                    var message = Encoding.UTF8.GetString(body);
+                    var message = Encoding.UTF8.GetString(ea.Body.ToArray());
+                    _logger.LogInformation("TransactionLogger received: {Message}", message);
 
-                    _logger.LogInformation("Received payment event: {Message}", message);
-                    await Task.Delay(10000); // 10000 = 10 segundos
-
-                    // Deserialize the payment event
                     var paymentEvent = JsonSerializer.Deserialize<CustomerPaymentEvent>(message);
-
                     if (paymentEvent != null)
                     {
-                        using (var scope = _scopeFactory.CreateScope())
-                        {
-                            var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
-                            var result = await emailService.PaymentConfirmationAsync(paymentEvent);
-
-                            if (result.Success)
-                            {
-                                _logger.LogInformation("Email sent successfully for payment {TransactionId}",
-                                    paymentEvent.TransactionId);
-
-                                // Acknowledge message (remove from queue)
-                                await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
-                            }
-                            else
-                            {
-                                _logger.LogWarning("Failed to send email: {Error}", result.ErrorMessage);
-
-                                // Reject and requeue message
-                                await _channel.BasicNackAsync(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
-                            }
-                        }
+                        _logs.Add(paymentEvent);
+                        _logger.LogInformation("Logged transaction {TransactionId} (total logged: {Count})", paymentEvent.TransactionId, _logs.Count);
+                        await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("TransactionLogger received non-payment message");
+                        await _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: false);
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error processing payment event");
-                    await _channel.BasicNackAsync(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
+                    _logger.LogError(ex, "Error logging transaction");
+                    await _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: true);
                 }
+
+                await Task.Yield();
             };
 
-            await _channel.BasicConsumeAsync(
-                queue: "payment-events",
-                autoAck: false,
-                consumer: consumer);
+            await _channel.BasicConsumeAsync(queue: QueueName, autoAck: false, consumer: consumer);
 
             // Keep running until cancellation
             while (!stoppingToken.IsCancellationRequested)
@@ -118,7 +99,7 @@ namespace UserService.Infrastructure.Messaging
 
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("EmailNotificationConsumer stopping");
+            _logger.LogInformation("TransactionLoggerConsumer stopping");
 
             if (_channel != null)
             {

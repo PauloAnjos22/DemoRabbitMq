@@ -40,28 +40,6 @@ namespace UserService.Infrastructure.Services
             var customerFrom = await _repository.FindByIdAsync(paymentEvent.AccountFrom);
             var customerTo = await _repository.FindByIdAsync(paymentEvent.AccountTo);
 
-            // inside PaymentConfirmationAsync, just after retrieving customerFrom and customerTo
-            _logger.LogDebug("MailSettings.From='{From}', FromName='{FromName}'", _mailSettings?.From, _mailSettings?.FromName);
-            _logger.LogDebug("CustomerFrom.Id={Id} CustomerFrom.Email='{Email}'", customerFrom?.Id, customerFrom?.Email);
-            _logger.LogDebug("CustomerTo.Id={Id} CustomerTo.Email='{Email}'", customerTo?.Id, customerTo?.Email);
-
-            // keep the existing defensive checks — they will stop MimeKit from receiving nulls
-            if (string.IsNullOrWhiteSpace(_mailSettings?.From))
-            {
-                _logger.LogError("MailSettings.From is not configured");
-                return ResultResponse.Fail("MailSettings.From is not configured");
-            }
-            if (string.IsNullOrWhiteSpace(customerFrom?.Email))
-            {
-                _logger.LogWarning("CustomerFrom has no email: {CustomerId}", customerFrom?.Id);
-                return ResultResponse.Fail("Missing email for sender");
-            }
-            if (string.IsNullOrWhiteSpace(customerTo?.Email))
-            {
-                _logger.LogWarning("CustomerTo has no email: {CustomerId}", customerTo?.Id);
-                return ResultResponse.Fail("Missing email for receiver");
-            }
-
             if (customerFrom == null || customerTo == null)
             {
                 return ResultResponse.Fail("Customer not found");
@@ -73,7 +51,7 @@ namespace UserService.Infrastructure.Services
             messageToReceiver.Subject = "Payment Confirmation";
             messageToReceiver.Body = new TextPart("plain")
             {
-                Text = $"{customerFrom.Name} te enviou um pagamento de R${paymentEvent.PaymentAmount}"
+                Text = $"Transação recebida de {customerFrom.Name} no valor de R${paymentEvent.PaymentAmount}"
             };
 
             var messageToSender = new MimeMessage();
@@ -82,7 +60,7 @@ namespace UserService.Infrastructure.Services
             messageToSender.Subject = "Payment Confirmation";
             messageToSender.Body = new TextPart("plain")
             {
-                Text = $"Olá, {customerFrom.Name}!<br> O seu pagamento no valor de R${paymentEvent.PaymentAmount} para {customerTo.Name} foi enviado com sucesso!"
+                Text = $"O pagamento no valor de R${paymentEvent.PaymentAmount} foi enviado com sucesso para {customerTo.Name}!"
             };
 
             using var smtp = new SmtpClient();

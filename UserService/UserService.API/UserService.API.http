@@ -23,8 +23,8 @@ POST {{UserService.API_HostAddress}}/api/payment
 Content-Type: application/json
 
 {
-  "From": "2AAA0DC8-90D5-4690-5D30-08DE0C30673D",
-  "To": "7C7DD0AB-0F03-420C-5D31-08DE0C30673D",
+  "From": "2aaa0dc8-90d5-4690-5d30-08de0c30673d",
+  "To": "7c7dd0ab-0f03-420c-5d31-08de0c30673d",
   "Amount": 1000,
   "Method": "CreditCard"
 }
