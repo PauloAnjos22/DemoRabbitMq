@@ -6,10 +6,9 @@ using UserService.Domain.Events;
 
 namespace UserService.Infrastructure.Messaging
 {
-    public class RabbitMQMessagePublisher : IMessagePublisher
+    public class RabbitMQMessagePublisher<T> : IMessagePublisher<T> where T : class // (RESTRIÇÃO para o tipo genérico)
     {
-        private const string ExchangeName = "payment-exchange";
-        public async Task<bool> PublishAsync(CustomerPaymentEvent request)
+        public async Task<bool> PublishAsync(T request)
         {
             try
             {
@@ -24,8 +23,10 @@ namespace UserService.Infrastructure.Messaging
                 await using var connection = await factory.CreateConnectionAsync();
                 await using var channel = await connection.CreateChannelAsync();
 
+                var exchangeName = typeof(T).Name.ToLowerInvariant(); // ex: "customerpaymentevent"
+
                 // Declare exchange
-                await channel.ExchangeDeclareAsync(exchange: ExchangeName,
+                await channel.ExchangeDeclareAsync(exchange: exchangeName,
                                                   type: ExchangeType.Fanout,
                                                   durable: true,
                                                   autoDelete: false,
@@ -38,7 +39,7 @@ namespace UserService.Infrastructure.Messaging
                 properties.Persistent = false;
 
                 // Publish
-                await channel.BasicPublishAsync(exchange: ExchangeName,
+                await channel.BasicPublishAsync(exchange: exchangeName,
                                                 routingKey: string.Empty,
                                                 mandatory: false,
                                                 basicProperties: properties,

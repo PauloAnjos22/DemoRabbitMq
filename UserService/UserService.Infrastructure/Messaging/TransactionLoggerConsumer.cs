@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
 using UserService.Application.Interfaces.Services;
+using UserService.Domain.Entities;
 using UserService.Domain.Events;
 
 namespace UserService.Infrastructure.Messaging
@@ -17,10 +18,10 @@ namespace UserService.Infrastructure.Messaging
         private IConnection? _connection;
         private IChannel? _channel;
         private readonly IServiceScopeFactory _scopeFactory;
-        private const string ExchangeName = "payment-exchange";
+        private const string ExchangeName = "transactioncompletedevent";
         private const string QueueName = "payment-logs";
 
-        private static readonly ConcurrentBag<CustomerPaymentEvent> _logs = new();
+        private static readonly ConcurrentBag<TransactionCompletedEvent> _logs = new();
 
         public TransactionLoggerConsumer(ILogger<TransactionLoggerConsumer> logger, IServiceScopeFactory scopeFactory)
         {
@@ -66,11 +67,22 @@ namespace UserService.Infrastructure.Messaging
                     var message = Encoding.UTF8.GetString(ea.Body.ToArray());
                     _logger.LogInformation("TransactionLogger received: {Message}", message);
 
-                    var paymentEvent = JsonSerializer.Deserialize<CustomerPaymentEvent>(message);
-                    if (paymentEvent != null)
+                    var transactionEvent = JsonSerializer.Deserialize<TransactionCompletedEvent>(message);
+                    if (transactionEvent != null)
                     {
-                        _logs.Add(paymentEvent);
-                        _logger.LogInformation("Logged transaction {TransactionId} (total logged: {Count})", paymentEvent.TransactionId, _logs.Count);
+                        using var scope = _scopeFactory.CreateScope();
+                        var loggerService = scope.ServiceProvider.GetRequiredService<ITransactionLoggerService>();
+                        var logEntry = new TransactionLog
+                        {
+                            TransactionId = transactionEvent.TransactionId,
+                            AccountFrom = transactionEvent.AccountFrom,
+                            AccountTo = transactionEvent.AccountTo,
+                            Amount = transactionEvent.PaymentAmount,
+                            Currency = transactionEvent.Currency,
+                            PaymentMethod = transactionEvent.PaymentMethod,
+                            Status = transactionEvent.Status ?? "Completed",
+                            LoggedAt = DateTime.UtcNow
+                        };
                         await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
                     }
                     else

@@ -3,8 +3,8 @@ using UserService.Domain.Events;
 
 namespace UserService.Application.Interfaces.Messaging
 {
-    public interface IMessagePublisher
+    public interface IMessagePublisher<T>
     {
-        Task<bool> PublishAsync(CustomerPaymentEvent request);
+        Task<bool> PublishAsync(T eventRequest);
     }
 }

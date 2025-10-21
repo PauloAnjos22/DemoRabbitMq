@@ -14,14 +14,21 @@ namespace UserService.Application.UseCases
         private readonly ICustomerRepository _customerRepository;
         private readonly IMapper _mapper;
         private readonly IPaymentRepository _paymentRepository;
-        private readonly IMessagePublisher _messagePublisher;
+        private readonly IMessagePublisher<CustomerPaymentEvent> _paymentPublisher;
+        private readonly IMessagePublisher<TransactionCompletedEvent> _transactionPublisher;
 
-        public CustomerPayment(ICustomerRepository customerRepository, IMapper mapper, IPaymentRepository paymentRepository, IMessagePublisher messagePublisher)
+        public CustomerPayment(
+            ICustomerRepository customerRepository,
+            IMapper mapper,
+            IPaymentRepository paymentRepository,
+            IMessagePublisher<CustomerPaymentEvent> paymentPublisher,
+            IMessagePublisher<TransactionCompletedEvent> transactionPublisher)
         {
             _customerRepository = customerRepository;
             _mapper = mapper;
             _paymentRepository = paymentRepository;
-            _messagePublisher = messagePublisher;
+            _paymentPublisher = paymentPublisher;
+            _transactionPublisher = transactionPublisher;
         }
 
         public async Task<ResultResponse> ProcessPayment(CreatePaymentDto request)
@@ -62,12 +69,13 @@ namespace UserService.Application.UseCases
             }
 
             var paymentEvent = new CustomerPaymentEvent(payment.Id, payment.From, payment.To, payment.Method, payment.Amount);
-            var publishResult = await _messagePublisher.PublishAsync(paymentEvent);
+            var transactionEvent = new TransactionCompletedEvent(payment.Id, payment.From, payment.To, payment.Amount, "BRL", payment.Method, "Completed");
+            
+            var paymentPublished = await _paymentPublisher.PublishAsync(paymentEvent);
+            var transactionPublished = await _transactionPublisher.PublishAsync(transactionEvent);
 
-            if (!publishResult)
-            {
-                return ResultResponse.Fail("Erro ao publicar mensagem");
-            }
+            if (!paymentPublished || !transactionPublished)
+                return ResultResponse.Fail("Erro ao publicar eventos de pagamento");
 
             return ResultResponse.Ok();
         }

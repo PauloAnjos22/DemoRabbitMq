@@ -15,7 +15,7 @@ namespace UserService.Infrastructure.Messaging
         private IConnection? _connection;
         private IChannel? _channel;
         private readonly IServiceScopeFactory _scopeFactory;
-        private const string ExchangeName = "payment-exchange";
+        private const string ExchangeName = "customerpaymentevent";
         private const string QueueName = "payment-emails";
 
         public EmailNotificationConsumer(ILogger<EmailNotificationConsumer> logger, IServiceScopeFactory scopeFactory)
@@ -105,7 +105,7 @@ namespace UserService.Infrastructure.Messaging
             };
 
             await _channel.BasicConsumeAsync(
-                queue: "payment-events",
+                queue: QueueName,
                 autoAck: false,
                 consumer: consumer);
 

@@ -98,7 +98,7 @@ namespace UserService.Infrastructure.Services
                 if(errorList.Count == 0) 
                     return ResultResponse.Ok();
 
-                return ResultResponse.Fail($"{errorList}");
+                return ResultResponse.Fail(string.Join("; ", errorList));
             }
             catch (Exception ex)
             {
