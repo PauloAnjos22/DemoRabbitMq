@@ -20,10 +20,19 @@ namespace UserService.Infrastructure.Repositories
 
             var bankAccount = new BankAccount();
             bankAccount.CustomerId = customer;
-            bankAccount.MoneyAmount = 0;
+            bankAccount.Balance = 0;
 
             await _context.BankAccounts.AddAsync(bankAccount);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<BankAccount?> FindCustomerBankAccountAsync(Guid customer)
+        {
+            if (customer == Guid.Empty)
+                return null;
+
+            return await _context.BankAccounts.FindAsync(customer);
+        }
+
     }
 }

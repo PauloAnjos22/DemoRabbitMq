@@ -10,5 +10,6 @@ namespace UserService.Application.Interfaces.Repositories
     public interface IBankAccountRepository
     {
         Task<bool> OpenBankAccountAsync(Guid customer);
+        Task<BankAccount?> FindCustomerBankAccountAsync(Guid customer);
     }
 }
