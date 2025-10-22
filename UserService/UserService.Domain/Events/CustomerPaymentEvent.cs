@@ -7,10 +7,10 @@
         public Guid AccountTo { get; init; }
         public string? PaymentMethod { get; init; } 
 
-        public int PaymentAmount { get; init; }
+        public long PaymentAmount { get; init; }
         public DateTime Created { get; init; }
 
-        public CustomerPaymentEvent(Guid transactionId, Guid accountFrom, Guid accountTo, string? paymentMethod, int paymentAmount)
+        public CustomerPaymentEvent(Guid transactionId, Guid accountFrom, Guid accountTo, string? paymentMethod, long paymentAmount)
         {
             TransactionId = transactionId;
             AccountFrom = accountFrom;

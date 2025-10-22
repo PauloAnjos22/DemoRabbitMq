@@ -1,9 +1,4 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UserService.Application.DTOs.Common;
 using UserService.Application.DTOs.Customer;
 using UserService.Application.Interfaces.Repositories;
@@ -16,11 +11,13 @@ namespace UserService.Application.UseCases
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly IMapper _mapper;
+        private readonly IBankAccountRepository _bankAccountRepository;
 
-        public RegisterCustomer(ICustomerRepository customerRepository, IMapper mapper)
+        public RegisterCustomer(ICustomerRepository customerRepository, IMapper mapper, IBankAccountRepository bankAccountRepository)
         {
             _customerRepository = customerRepository;
             _mapper = mapper;
+            _bankAccountRepository = bankAccountRepository;
         }
 
         public async Task<ResultResponse> RegisterCustomerAsync(CreateCustomerDto request) 
@@ -36,6 +33,12 @@ namespace UserService.Application.UseCases
             if (!customer)
             {
                 return ResultResponse.Fail("Falha ao registrar cliente");
+            }
+
+            var customerBankAccount = await _bankAccountRepository.OpenBankAccountAsync(customerMapped.Id);
+            if (!customerBankAccount)
+            {
+                return ResultResponse.Fail("Falha ao abrir conta do cliente");
             }
 
             return ResultResponse.Ok();

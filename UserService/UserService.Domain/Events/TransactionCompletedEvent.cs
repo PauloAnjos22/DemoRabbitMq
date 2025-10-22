@@ -11,7 +11,7 @@ namespace UserService.Domain.Events
         public Guid TransactionId { get; init; }
         public Guid AccountFrom { get; init; }
         public Guid AccountTo { get; init; }
-        public int PaymentAmount { get; init; }
+        public long PaymentAmount { get; init; }
         public string Currency { get; init; }
         public string? PaymentMethod { get; init; }
         public string? Status { get; init; }
@@ -19,7 +19,7 @@ namespace UserService.Domain.Events
         public DateTime CompletedAt { get; init; }
 
 
-        public TransactionCompletedEvent(Guid transactionId, Guid accountFrom, Guid accountTo, int paymentAmount, string currency, string? paymentMethod, string? status)
+        public TransactionCompletedEvent(Guid transactionId, Guid accountFrom, Guid accountTo, long paymentAmount, string currency, string? paymentMethod, string? status)
         {
             TransactionId = transactionId;
             AccountFrom = accountFrom;

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserService.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using UserService.Infrastructure.Persistence;
 namespace UserService.Infrastructure.Migrations
 {
     [DbContext(typeof(AppServiceDbContext))]
-    partial class AppServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251022174744_TransactionLogEntitie")]
+    partial class TransactionLogEntitie
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,8 +37,8 @@ namespace UserService.Infrastructure.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("MoneyAmount")
-                        .HasColumnType("bigint");
+                    b.Property<int>("MoneyAmount")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -69,8 +72,8 @@ namespace UserService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("Amount")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -101,14 +104,11 @@ namespace UserService.Infrastructure.Migrations
                     b.Property<Guid>("AccountTo")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("Amount")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Currency")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FailureReason")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LoggedAt")

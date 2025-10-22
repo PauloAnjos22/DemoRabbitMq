@@ -22,8 +22,6 @@ namespace UserService.Infrastructure.Messaging
         private const string ExchangeName = "transactioncompletedevent";
         private const string QueueName = "payment-logs";
 
-        private static readonly ConcurrentBag<TransactionCompletedEvent> _logs = new();
-
         public TransactionLoggerConsumer(ILogger<TransactionLoggerConsumer> logger, IServiceScopeFactory scopeFactory)
         {
             _logger = logger;
