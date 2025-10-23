@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UserService.Application.DTOs.Customer;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.Interfaces.Repositories
@@ -11,5 +12,6 @@ namespace UserService.Application.Interfaces.Repositories
     {
         Task<bool> OpenBankAccountAsync(Guid customer);
         Task<BankAccount?> FindCustomerBankAccountAsync(Guid customer);
+        Task<IEnumerable<BankAccount?>> GetAllCustomersBankAccountsAsync();
     }
 }

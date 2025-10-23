@@ -28,7 +28,9 @@ namespace UserService.Application.UseCases
             IPaymentRepository paymentRepository,
             IMessagePublisher<CustomerPaymentEvent> paymentPublisher,
             IMessagePublisher<TransactionCompletedEvent> transactionPublisher,
-            IBankAccountRepository bankAccountRepository
+            IBankAccountRepository bankAccountRepository,
+            IEfUnitOfWork efUnitOfWork,
+            ILogger<CustomerPayment> logger
             )
         {
             _customerRepository = customerRepository;
@@ -37,6 +39,8 @@ namespace UserService.Application.UseCases
             _paymentPublisher = paymentPublisher;
             _transactionPublisher = transactionPublisher;
             _bankAccountRepository = bankAccountRepository;
+            _efUnitOfWork = efUnitOfWork ?? throw new ArgumentNullException(nameof(efUnitOfWork));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<ResultResponse> ProcessPayment(CreatePaymentDto request)
@@ -79,7 +83,7 @@ namespace UserService.Application.UseCases
                 return ResultResponse.Fail("Saldo insuficiente na conta para realizar a transação");
             }
 
-            using var transaction = await _efUnitOfWork.BeginTransactionAsync();
+            await _efUnitOfWork.BeginTransactionAsync();
 
             try
             {
@@ -107,7 +111,7 @@ namespace UserService.Application.UseCases
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+                await _efUnitOfWork.RollbackTransactionAsync();
                 _logger.LogError(ex, "Error processing payment");
                 return ResultResponse.Fail("Transaction failed");
             }

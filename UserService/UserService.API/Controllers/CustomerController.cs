@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UserService.Application.DTOs.Customer;
+using UserService.Application.Interfaces.Repositories;
 using UserService.Application.Interfaces.UseCases;
 
 namespace UserService.API.Controllers
@@ -10,11 +11,13 @@ namespace UserService.API.Controllers
     {
         private readonly IRegisterCustomer _registerUseCase;
         private readonly IGetCustomers _getCustomers;
+        private readonly IGetCustomersAccount _getCustomersAccount;
 
-        public CustomerController(IRegisterCustomer registerUseCase, IGetCustomers getCustomers)
+        public CustomerController(IRegisterCustomer registerUseCase, IGetCustomers getCustomers, IGetCustomersAccount getCustomersAccount)
         {
             _registerUseCase = registerUseCase;
             _getCustomers = getCustomers;
+            _getCustomersAccount = getCustomersAccount;
         }
 
         [HttpPost]
@@ -29,11 +32,19 @@ namespace UserService.API.Controllers
             return Ok();
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<ResponseCustomerDto>>> GetAllCustomers()
         {
             var customers = await _getCustomers.GetAllAsync();
             return Ok(customers);
+        }
+
+        [HttpGet("bank-accounts")]
+        public async Task<ActionResult<IEnumerable<CustomerAccountDto>>> GetAllCustomersBankAccounts()
+        {
+            var customerAccounts = await _getCustomersAccount.GetCustomersAccountAsync();
+
+            return Ok(customerAccounts);
         }
     }
 }

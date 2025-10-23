@@ -1,6 +1,8 @@
 ﻿using UserService.Domain.Entities;
 using UserService.Application.Interfaces.Repositories;
 using UserService.Infrastructure.Persistence;
+using UserService.Application.DTOs.Customer;
+using Microsoft.EntityFrameworkCore;
 
 namespace UserService.Infrastructure.Repositories
 {
@@ -31,7 +33,12 @@ namespace UserService.Infrastructure.Repositories
             if (customer == Guid.Empty)
                 return null;
 
-            return await _context.BankAccounts.FindAsync(customer);
+            return await _context.BankAccounts.FirstOrDefaultAsync(c => c.CustomerId == customer);
+        }
+
+        public async Task<IEnumerable<BankAccount?>> GetAllCustomersBankAccountsAsync()
+        {
+            return await _context.BankAccounts.ToListAsync();
         }
 
     }

@@ -32,6 +32,7 @@ builder.Services.AddScoped<IEfUnitOfWork, EfUnitOfWork>();
 builder.Services.AddScoped(typeof(IMessagePublisher<>), typeof(RabbitMQMessagePublisher<>)); // São genéricos agora
 builder.Services.AddScoped<IRegisterCustomer, RegisterCustomer>();
 builder.Services.AddScoped<IGetCustomers, GetAllCustomers>();
+builder.Services.AddScoped<IGetCustomersAccount, GetAllCustomersAccount>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddAutoMapper(cfg =>
