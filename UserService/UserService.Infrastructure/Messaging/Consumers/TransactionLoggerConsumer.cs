@@ -11,7 +11,7 @@ using UserService.Application.Interfaces.Services;
 using UserService.Domain.Entities;
 using UserService.Domain.Events;
 
-namespace UserService.Infrastructure.Messaging
+namespace UserService.Infrastructure.Messaging.Consumers
 {
     public class TransactionLoggerConsumer : BackgroundService
     {

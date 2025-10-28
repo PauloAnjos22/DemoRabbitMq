@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using UserService.Application.Interfaces.Repositories;
 using UserService.Application.Interfaces.Services;
 using UserService.Infrastructure.Configuration;
-using UserService.Infrastructure.Messaging;
+using UserService.Infrastructure.Messaging.Consumers;
 using UserService.Infrastructure.Persistence;
 using UserService.Infrastructure.Repositories;
 using UserService.Infrastructure.Services;

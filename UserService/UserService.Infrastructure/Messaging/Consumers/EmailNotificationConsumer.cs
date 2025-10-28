@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using UserService.Application.Interfaces.Services;
 using UserService.Domain.Events;
-namespace UserService.Infrastructure.Messaging
+namespace UserService.Infrastructure.Messaging.Consumers
 {
     public class EmailNotificationConsumer : BackgroundService
     {

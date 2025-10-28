@@ -18,7 +18,7 @@ namespace UserService.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CreatePaymentDto>> NewPaymentAsync(CreatePaymentDto request)
+        public async Task<ActionResult<CreatePaymentRequest>> NewPaymentAsync(CreatePaymentRequest request)
         {
             if(request == null)
             {

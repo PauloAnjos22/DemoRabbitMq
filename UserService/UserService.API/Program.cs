@@ -6,7 +6,7 @@ using UserService.Application.Interfaces.UseCases;
 using UserService.Application.Mappings;
 using UserService.Application.UseCases;
 using UserService.Infrastructure.Configuration;
-using UserService.Infrastructure.Messaging;
+using UserService.Infrastructure.Messaging.Publishers;
 using UserService.Infrastructure.Persistence;
 using UserService.Infrastructure.Repositories;
 using UserService.Infrastructure.Services;
@@ -24,7 +24,7 @@ builder.Services.AddDbContext<AppServiceDbContext>
         )
     );
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<IEventPayment, CustomerPayment>();
+builder.Services.AddScoped<IEventPayment, PaymentCustomer>();
 builder.Services.AddScoped<IBankAccountRepository, BankAccountRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<ITransactionLogRepository, TransactionLogRepository>();

@@ -10,7 +10,7 @@ using UserService.Domain.Events;
 
 namespace UserService.Application.UseCases
 {
-    public class CustomerPayment : IEventPayment
+    public class PaymentCustomer : IEventPayment
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly IMapper _mapper;
@@ -19,10 +19,10 @@ namespace UserService.Application.UseCases
         private readonly IMessagePublisher<CustomerPaymentEvent> _paymentPublisher;
         private readonly IMessagePublisher<TransactionCompletedEvent> _transactionPublisher;
         private readonly IEfUnitOfWork _efUnitOfWork;
-        private readonly ILogger<CustomerPayment> _logger;
+        private readonly ILogger<PaymentCustomer> _logger;
 
 
-        public CustomerPayment(
+        public PaymentCustomer(
             ICustomerRepository customerRepository,
             IMapper mapper,
             IPaymentRepository paymentRepository,
@@ -30,7 +30,7 @@ namespace UserService.Application.UseCases
             IMessagePublisher<TransactionCompletedEvent> transactionPublisher,
             IBankAccountRepository bankAccountRepository,
             IEfUnitOfWork efUnitOfWork,
-            ILogger<CustomerPayment> logger
+            ILogger<PaymentCustomer> logger
             )
         {
             _customerRepository = customerRepository;
@@ -43,7 +43,7 @@ namespace UserService.Application.UseCases
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<ResultResponse> ProcessPayment(CreatePaymentDto request)
+        public async Task<ResultResponse> ProcessPayment(CreatePaymentRequest request)
         {
             if(request == null)
             {

@@ -9,13 +9,9 @@ POST {{UserService.API_HostAddress}}/api/customer
 Content-Type: application/json
 
 {
-  "Name": "Moicanso",
-  "Email": "moicanso@gmail.com"
+  "Name": "Ankalaev Owl Face",
+  "Email": "ankalaev@gmail.com"
 }
-
-###
-
-GET {{UserService.API_HostAddress}}/api/customer
 
 ###
 
@@ -23,10 +19,18 @@ POST {{UserService.API_HostAddress}}/api/payment
 Content-Type: application/json
 
 {
-  "From": "2aaa0dc8-90d5-4690-5d30-08de0c30673d",
-  "To": "7c7dd0ab-0f03-420c-5d31-08de0c30673d",
-  "Amount": 1000,
+  "From": "E64FBF44-A476-40CF-B719-08DE12804329",
+  "To": "DD387216-8B80-441D-B71A-08DE12804329",
+  "Amount": 500,
   "Method": "CreditCard"
 }
+
+###
+
+GET {{UserService.API_HostAddress}}/api/customer/all
+
+###
+
+GET {{UserService.API_HostAddress}}/api/customer/bank-accounts
 
 ###

@@ -5,6 +5,6 @@ namespace UserService.Application.Interfaces.UseCases
 {
     public interface IEventPayment
     {
-        Task<ResultResponse> ProcessPayment(CreatePaymentDto request); // creates payment entity and publishes UserPaymentEvent
+        Task<ResultResponse> ProcessPayment(CreatePaymentRequest request); // creates payment entity and publishes UserPaymentEvent
     }
 }
