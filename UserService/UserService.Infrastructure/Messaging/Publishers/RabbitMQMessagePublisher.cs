@@ -4,7 +4,7 @@ using System.Text.Json;
 using UserService.Application.Interfaces.Messaging;
 using UserService.Domain.Events;
 
-namespace UserService.Infrastructure.Messaging
+namespace UserService.Infrastructure.Messaging.Publishers
 {
     public class RabbitMQMessagePublisher<T> : IMessagePublisher<T> where T : class // (RESTRIÇÃO para o tipo genérico)
     {

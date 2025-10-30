@@ -33,13 +33,12 @@ namespace UserService.Infrastructure.Repositories
             if (customer == Guid.Empty)
                 return null;
 
-            return await _context.BankAccounts.FirstOrDefaultAsync(c => c.CustomerId == customer);
+            return await _context.BankAccounts.FirstOrDefaultAsync(ba => ba.CustomerId == customer);
         }
 
         public async Task<IEnumerable<BankAccount?>> GetAllCustomersBankAccountsAsync()
         {
             return await _context.BankAccounts.ToListAsync();
         }
-
     }
 }

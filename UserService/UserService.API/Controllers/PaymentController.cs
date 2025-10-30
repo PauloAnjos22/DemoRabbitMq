@@ -17,8 +17,8 @@ namespace UserService.API.Controllers
             _eventPayment = paymentRepository;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<CreatePaymentRequest>> NewPaymentAsync(CreatePaymentRequest request)
+        [HttpPost("new-payment")]
+        public async Task<ActionResult> NewPaymentAsync(CreatePaymentRequest request)
         {
             if(request == null)
             {
@@ -31,7 +31,12 @@ namespace UserService.API.Controllers
                 return BadRequest(newPayment.ErrorMessage);
             }
 
-            return Ok(newPayment);
+            return Ok();
+        }
+        [HttpPost("add-funds")]
+        public async Task<ActionResult> DepositFundsAsync(CreateDepositRequest request)
+        {
+
         }
     }
 }
