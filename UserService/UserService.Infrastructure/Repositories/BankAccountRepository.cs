@@ -41,6 +41,18 @@ namespace UserService.Infrastructure.Repositories
             return await _context.BankAccounts.ToListAsync();
         }
 
+        public async Task<IEnumerable<(BankAccount Account, Customer Customer)>> GetAllAccountsWithCustomersAsync()
+        {
+            var result = await _context.BankAccounts
+                .Join(_context.Customers,
+                    account => account.CustomerId,
+                    customer => customer.Id,
+                    (account, customer) => new { Account = account, Customer = customer })
+                .ToListAsync();
+
+            return result.Select(x => (x.Account, x.Customer));
+        }
+
         public async Task<bool> DebitCustomerAccountAsync(Guid fromCustomerId, Guid toCustomerId, long amount)
         {
             var payerAccount = await _context.BankAccounts.FirstOrDefaultAsync(c => c.CustomerId == fromCustomerId);

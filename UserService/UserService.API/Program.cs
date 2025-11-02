@@ -39,6 +39,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IBankAccountService, BankAccountAction>();
 builder.Services.AddScoped<IPaymentEventPublisherService, PaymentEventPublisher>();
 builder.Services.AddScoped<IPaymentValidatorService, PaymentValidator>();
+builder.Services.AddScoped<IRegisterValidator, RegisterValidator>();
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddAutoMapper(cfg =>

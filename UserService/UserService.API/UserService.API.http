@@ -9,8 +9,8 @@ POST {{UserService.API_HostAddress}}/api/customer
 Content-Type: application/json
 
 {
-  "Name": "Ankalaev Owl Face",
-  "Email": "ankalaev@gmail.com"
+  "Name": "Moicanso Filho do Seniul Dariush",
+  "Email": "moicalvo@gmail.com"
 }
 
 ###
