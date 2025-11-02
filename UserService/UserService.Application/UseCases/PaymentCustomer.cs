@@ -45,42 +45,45 @@ namespace UserService.Application.UseCases
 
         public async Task<ResultResponse> ProcessPayment(CreatePaymentRequest request)
         {
-            if(request == null)
+            if (request.Amount <= 0)  
             {
-                return ResultResponse.Fail("Dados inválidos");
-            }
-
-            if (request.Amount < 0) {
-                return ResultResponse.Fail("Valor inválido de transação");
+                _logger.LogWarning("Payment failed: invalid amount. Amount={Amount}", request.Amount);
+                return ResultResponse.Fail("Payment amount must be greater than zero");
             }
 
             var customerFrom = await _customerRepository.FindByIdAsync(request.From);
             if (customerFrom == null)
             {
-                return ResultResponse.Fail("Cliente de origem não encontrado");
+                _logger.LogWarning("Payment failed: sender customer not found. CustomerId={CustomerId}", request.From);
+                return ResultResponse.Fail("Failed to find sender customer");
             }
 
             var customerTo = await _customerRepository.FindByIdAsync(request.To);
             if (customerTo == null)
             {
-                return ResultResponse.Fail("Cliente de destino não encontrado");
+                _logger.LogWarning("Payment failed: receiver customer not found. CustomerId={CustomerId}", request.To);
+                return ResultResponse.Fail("Failed to find receiver customer");
             }
 
             var payerAccount = await _bankAccountRepository.FindCustomerBankAccountAsync(request.From);
             if (payerAccount == null) {
-                return ResultResponse.Fail("Falha ao encontrar a conta do cliente de origem");
+                _logger.LogWarning("Payment failed: sender account not found. CustomerId={CustomerId}", request.From);
+                return ResultResponse.Fail("Failed to find sender customer account");
             }
             var receiverAccount = await _bankAccountRepository.FindCustomerBankAccountAsync(request.To);
             if (receiverAccount == null)
             {
-                return ResultResponse.Fail("Falha ao encontrar a conta do cliente de destino");
+                _logger.LogWarning("Payment failed: receiver account not found. CustomerId={CustomerId}", request.To);
+                return ResultResponse.Fail("Failed to find receiver customer account");
             }
 
             if (payerAccount.Balance < request.Amount)
             {
                 var failTransactionEvent = new TransactionCompletedEvent(Guid.NewGuid(), request.From, request.To, request.Amount, "BRL", request.Method, "Fail", "Insufficient funds");
                 var failtransactionPublished = await _transactionPublisher.PublishAsync(failTransactionEvent);
-                return ResultResponse.Fail("Saldo insuficiente na conta para realizar a transação");
+                _logger.LogWarning("Payment declined: insufficient funds. CustomerId={CustomerId}, Balance={Balance}, RequestedAmount={Amount}",
+                request.From, payerAccount.Balance, request.Amount);
+                return ResultResponse.Fail("Insufficient funds to complete the transaction");
             }
 
             await _efUnitOfWork.BeginTransactionAsync();
