@@ -40,5 +40,20 @@ namespace UserService.Infrastructure.Repositories
         {
             return await _context.BankAccounts.ToListAsync();
         }
+
+        public async Task<bool> DebitCustomerAccountAsync(Guid fromCustomerId, Guid toCustomerId, long amount)
+        {
+            var payerAccount = await _context.BankAccounts.FirstOrDefaultAsync(c => c.CustomerId == fromCustomerId);
+            var receiverAccount = await _context.BankAccounts.FirstOrDefaultAsync(c => c.CustomerId == toCustomerId);
+
+            if(payerAccount == null || receiverAccount == null)
+                return false;
+
+            payerAccount.Balance -= amount;
+            receiverAccount.Balance += amount;
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

@@ -4,6 +4,7 @@ using UserService.Application.DTOs.Common;
 using UserService.Application.DTOs.Payment;
 using UserService.Application.Interfaces.Messaging;
 using UserService.Application.Interfaces.Repositories;
+using UserService.Application.Interfaces.Services;
 using UserService.Application.Interfaces.UseCases;
 using UserService.Domain.Entities;
 using UserService.Domain.Events;
@@ -20,6 +21,8 @@ namespace UserService.Application.UseCases
         private readonly IMessagePublisher<TransactionCompletedEvent> _transactionPublisher;
         private readonly IEfUnitOfWork _efUnitOfWork;
         private readonly ILogger<PaymentCustomer> _logger;
+        private readonly IPaymentValidatorService _paymentValidator;
+        private readonly IBankAccountService _bankAccountService;
 
 
         public PaymentCustomer(
@@ -30,7 +33,9 @@ namespace UserService.Application.UseCases
             IMessagePublisher<TransactionCompletedEvent> transactionPublisher,
             IBankAccountRepository bankAccountRepository,
             IEfUnitOfWork efUnitOfWork,
-            ILogger<PaymentCustomer> logger
+            ILogger<PaymentCustomer> logger,
+            IPaymentValidatorService paymentValidator,
+            IBankAccountService bankAccountService
             )
         {
             _customerRepository = customerRepository;
@@ -41,57 +46,31 @@ namespace UserService.Application.UseCases
             _bankAccountRepository = bankAccountRepository;
             _efUnitOfWork = efUnitOfWork ?? throw new ArgumentNullException(nameof(efUnitOfWork));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _paymentValidator = paymentValidator;
+            _bankAccountService = bankAccountService;
         }
 
         public async Task<ResultResponse> ProcessPayment(CreatePaymentRequest request)
         {
-            if (request.Amount <= 0)  
-            {
-                _logger.LogWarning("Payment failed: invalid amount. Amount={Amount}", request.Amount);
-                return ResultResponse.Fail("Payment amount must be greater than zero");
-            }
-
-            var customerFrom = await _customerRepository.FindByIdAsync(request.From);
-            if (customerFrom == null)
-            {
-                _logger.LogWarning("Payment failed: sender customer not found. CustomerId={CustomerId}", request.From);
-                return ResultResponse.Fail("Failed to find sender customer");
-            }
-
-            var customerTo = await _customerRepository.FindByIdAsync(request.To);
-            if (customerTo == null)
-            {
-                _logger.LogWarning("Payment failed: receiver customer not found. CustomerId={CustomerId}", request.To);
-                return ResultResponse.Fail("Failed to find receiver customer");
-            }
-
-            var payerAccount = await _bankAccountRepository.FindCustomerBankAccountAsync(request.From);
-            if (payerAccount == null) {
-                _logger.LogWarning("Payment failed: sender account not found. CustomerId={CustomerId}", request.From);
-                return ResultResponse.Fail("Failed to find sender customer account");
-            }
-            var receiverAccount = await _bankAccountRepository.FindCustomerBankAccountAsync(request.To);
-            if (receiverAccount == null)
-            {
-                _logger.LogWarning("Payment failed: receiver account not found. CustomerId={CustomerId}", request.To);
-                return ResultResponse.Fail("Failed to find receiver customer account");
-            }
-
-            if (payerAccount.Balance < request.Amount)
+            var validationResult = await _paymentValidator.ValidateAsync(request );
+            if (!validationResult.Success)
             {
                 var failTransactionEvent = new TransactionCompletedEvent(Guid.NewGuid(), request.From, request.To, request.Amount, "BRL", request.Method, "Fail", "Insufficient funds");
                 var failtransactionPublished = await _transactionPublisher.PublishAsync(failTransactionEvent);
-                _logger.LogWarning("Payment declined: insufficient funds. CustomerId={CustomerId}, Balance={Balance}, RequestedAmount={Amount}",
-                request.From, payerAccount.Balance, request.Amount);
-                return ResultResponse.Fail("Insufficient funds to complete the transaction");
+                return ResultResponse.Fail(validationResult.ErrorMessage ?? "Validation result failed");
             }
 
             await _efUnitOfWork.BeginTransactionAsync();
 
             try
             {
-                payerAccount.Balance -= request.Amount;
-                receiverAccount.Balance += request.Amount;
+                var transferOk = await _bankAccountService.TransferAsync(request.From, request.To, request.Amount);
+                if (!transferOk)
+                {
+                    await _transactionPublisher.PublishAsync(new TransactionCompletedEvent(Guid.NewGuid(), request.From, request.To, request.Amount, "BRL", request.Method, "Fail", "Insufficient funds or account missing"));
+                    await _efUnitOfWork.RollbackTransactionAsync();
+                    return ResultResponse.Fail("Transaction failed");
+                }
 
                 var payment = new Payment();
                 payment.Id = Guid.NewGuid();

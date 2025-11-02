@@ -6,11 +6,11 @@ namespace UserService.Application.UseCases
 {
     public class DepositFunds : IDepositFunds
     {
-        private readonly IBankAccountRepository _bankAccountRepository;
+        private readonly IBankAccountPersistenceRepository _bankAccountRepository;
         private readonly IEfUnitOfWork _efUnitOfWork;
 
         public DepositFunds(
-            IBankAccountRepository bankAccountRepository, 
+            IBankAccountPersistenceRepository bankAccountRepository, 
             IEfUnitOfWork efUnitOfWork
             )
         {

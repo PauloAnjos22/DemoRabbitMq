@@ -13,5 +13,6 @@ namespace UserService.Application.Interfaces.Repositories
         Task<bool> OpenBankAccountAsync(Guid customer);
         Task<BankAccount?> FindCustomerBankAccountAsync(Guid customer);
         Task<IEnumerable<BankAccount?>> GetAllCustomersBankAccountsAsync();
+        Task<bool> DebitCustomerAccountAsync(Guid fromCustomerId, Guid toCustomerId, long amount);
     }
 }
