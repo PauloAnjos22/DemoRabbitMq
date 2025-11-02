@@ -6,11 +6,11 @@ namespace UserService.Application.UseCases
 {
     public class DepositFunds : IDepositFunds
     {
-        private readonly IBankAccountPersistenceRepository _bankAccountRepository;
+        private readonly IBankAccountRepository _bankAccountRepository;
         private readonly IEfUnitOfWork _efUnitOfWork;
 
         public DepositFunds(
-            IBankAccountPersistenceRepository bankAccountRepository, 
+            IBankAccountRepository bankAccountRepository, 
             IEfUnitOfWork efUnitOfWork
             )
         {
@@ -20,22 +20,7 @@ namespace UserService.Application.UseCases
 
         public async Task<ResultResponse> DepositFundsAsync(Guid customer, long amount)
         {
-            var findBankAccount = await _bankAccountRepository.FindCustomerBankAccountAsync( customer );
-            if (findBankAccount == null)
-            {
-                return ResultResponse.Fail("Customer Bank Account not found");
-            }
-
-            if (amount <= 0)
-            {
-                return ResultResponse.Fail("Invalid amount value");
-            }
-
-            await _efUnitOfWork.BeginTransactionAsync();
-            try
-            {
-
-            }
+            throw new NotImplementedException();
         }
     }
 }

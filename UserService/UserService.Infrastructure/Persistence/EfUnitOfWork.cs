@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using UserService.Application.Interfaces.Repositories;
-using UserService.Infrastructure.Persistence;
 
-namespace UserService.Infrastructure.Repositories
+namespace UserService.Infrastructure.Persistence
 {
     public class EfUnitOfWork : IEfUnitOfWork
     {

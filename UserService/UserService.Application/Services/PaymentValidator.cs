@@ -2,13 +2,12 @@
 using UserService.Application.DTOs.Common;
 using UserService.Application.DTOs.Payment;
 using UserService.Application.Interfaces.Services;
-using UserService.Domain.Events;
 using Microsoft.Extensions.Logging;
 using UserService.Application.Interfaces.Repositories;
 
 namespace UserService.Application.Services
 {
-    public class PaymentValidator : IPaymentValidator
+    public class PaymentValidator : IPaymentValidatorService
     {
         private readonly ILogger<PaymentValidator> _logger;
         private readonly ICustomerRepository _customerRepository;

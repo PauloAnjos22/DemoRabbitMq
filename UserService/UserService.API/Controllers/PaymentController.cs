@@ -33,10 +33,10 @@ namespace UserService.API.Controllers
 
             return Ok();
         }
-        [HttpPost("add-funds")]
-        public async Task<ActionResult> DepositFundsAsync(CreateDepositRequest request)
-        {
+        //[HttpPost("add-funds")]
+        //public async Task<ActionResult> DepositFundsAsync(CreateDepositRequest request)
+        //{
 
-        }
+        //}
     }
 }

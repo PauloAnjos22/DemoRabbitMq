@@ -15,12 +15,12 @@ Content-Type: application/json
 
 ###
 
-POST {{UserService.API_HostAddress}}/api/payment
+POST {{UserService.API_HostAddress}}/api/payment/new-payment
 Content-Type: application/json
 
 {
-  "From": "E64FBF44-A476-40CF-B719-08DE12804329",
-  "To": "DD387216-8B80-441D-B71A-08DE12804329",
+  "From": "DD387216-8B80-441D-B71A-08DE12804329",
+  "To": "E64FBF44-A476-40CF-B719-08DE12804329",
   "Amount": 500,
   "Method": "CreditCard"
 }

@@ -58,6 +58,9 @@ namespace UserService.Infrastructure.Messaging.Consumers
                 return;
             }
 
+            _logger.LogInformation("Waiting 15 seconds before starting consumer...");
+            await Task.Delay(15000, stoppingToken);
+
             var consumer = new AsyncEventingBasicConsumer(_channel);
             consumer.ReceivedAsync += async (model, ea) =>
             {
@@ -65,6 +68,7 @@ namespace UserService.Infrastructure.Messaging.Consumers
                 {
                     var message = Encoding.UTF8.GetString(ea.Body.ToArray());
                     _logger.LogInformation("TransactionLogger received: {Message}", message);
+                    await Task.Delay(10000); // 10000 = 10 segundos
 
                     var transactionEvent = JsonSerializer.Deserialize<TransactionCompletedEvent>(message);
                     if (transactionEvent != null)
@@ -80,7 +84,8 @@ namespace UserService.Infrastructure.Messaging.Consumers
                             Currency = transactionEvent.Currency,
                             PaymentMethod = transactionEvent.PaymentMethod,
                             Status = transactionEvent.Status ?? "Completed",
-                            LoggedAt = DateTime.UtcNow
+                            LoggedAt = DateTime.UtcNow,
+                            FailureReason = transactionEvent.FailureReason,
                         };
                         var saved = await logRepository.saveAsync(logEntry);
 
