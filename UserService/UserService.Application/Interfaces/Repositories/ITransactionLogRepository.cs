@@ -4,6 +4,6 @@ namespace UserService.Application.Interfaces.Repositories
 {
     public interface ITransactionLogRepository
     {
-        Task<bool> saveAsync(TransactionLog log);
+        Task<bool> saveAsync(AuditLog log);
     }
 }

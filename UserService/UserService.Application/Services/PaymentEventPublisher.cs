@@ -8,11 +8,11 @@ namespace UserService.Application.Services
     public class PaymentEventPublisher : IPaymentEventPublisherService
     {
         private readonly IMessagePublisher<CustomerPaymentEvent> _paymentPublisher;
-        private readonly IMessagePublisher<TransactionCompletedEvent> _transactionPublisher;
+        private readonly IMessagePublisher<TransactionLoggedEvent> _transactionPublisher;
 
         public PaymentEventPublisher(
             IMessagePublisher<CustomerPaymentEvent> paymentPublisher, 
-            IMessagePublisher<TransactionCompletedEvent> transactionPublisher
+            IMessagePublisher<TransactionLoggedEvent> transactionPublisher
             )
         {
             _paymentPublisher = paymentPublisher;
@@ -25,7 +25,7 @@ namespace UserService.Application.Services
             );
 
             await _transactionPublisher.PublishAsync(
-                new TransactionCompletedEvent(payment.Id, payment.From, payment.To, payment.Amount,
+                new TransactionLoggedEvent(payment.Id, payment.From, payment.To, payment.Amount,
                 "BRL", payment.Method, "Completed", null)
             );
         }
@@ -33,7 +33,7 @@ namespace UserService.Application.Services
         public async Task PublishPaymentFailedAsync(Guid from, Guid to, long amount, string? method, string reason)
         {
             await _transactionPublisher.PublishAsync(
-                new TransactionCompletedEvent(Guid.NewGuid(), from, to, amount, "BRL", method, "Failed", reason)
+                new TransactionLoggedEvent(Guid.NewGuid(), from, to, amount, "BRL", method, "Failed", reason)
             ); 
         }
     }

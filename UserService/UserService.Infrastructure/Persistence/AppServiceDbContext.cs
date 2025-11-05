@@ -12,6 +12,6 @@ namespace UserService.Infrastructure.Persistence
         public DbSet<Customer> Customers { get; set; } = null!;
         public DbSet<Payment> Payments { get; set; } = null!;
         public DbSet<BankAccount> BankAccounts { get; set; } = null!;
-        public DbSet<TransactionLog> TransactionLogs { get; set; } = null!;
+        public DbSet<AuditLog> TransactionLogs { get; set; } = null!;
     }
 }

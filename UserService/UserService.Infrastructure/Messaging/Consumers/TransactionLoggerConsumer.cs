@@ -19,7 +19,7 @@ namespace UserService.Infrastructure.Messaging.Consumers
         private IConnection? _connection;
         private IChannel? _channel;
         private readonly IServiceScopeFactory _scopeFactory;
-        private const string ExchangeName = "transactioncompletedevent";
+        private const string ExchangeName = "transactionloggedevent";
         private const string QueueName = "payment-logs";
 
         public TransactionLoggerConsumer(ILogger<TransactionLoggerConsumer> logger, IServiceScopeFactory scopeFactory)
@@ -70,7 +70,7 @@ namespace UserService.Infrastructure.Messaging.Consumers
                     _logger.LogInformation("TransactionLogger received: {Message}", message);
                     await Task.Delay(10000); // 10000 = 10 segundos
 
-                    var transactionEvent = JsonSerializer.Deserialize<TransactionCompletedEvent>(message);
+                    var transactionEvent = JsonSerializer.Deserialize<TransactionLoggedEvent>(message);
                     if (transactionEvent != null)
                     {
                         using var scope = _scopeFactory.CreateScope();

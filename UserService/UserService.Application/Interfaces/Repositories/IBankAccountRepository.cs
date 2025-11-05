@@ -9,5 +9,6 @@ namespace UserService.Application.Interfaces.Repositories
         Task<IEnumerable<BankAccount?>> GetAllCustomersBankAccountsAsync();
         Task<IEnumerable<(BankAccount Account, Customer Customer)>> GetAllAccountsWithCustomersAsync();
         Task<bool> DebitCustomerAccountAsync(Guid fromCustomerId, Guid toCustomerId, long amount); // Update Balance 
+        Task<bool> DepositFundsAsync(Guid Customer, long amount); 
     }
 }

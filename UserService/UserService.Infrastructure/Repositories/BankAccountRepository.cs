@@ -67,5 +67,15 @@ namespace UserService.Infrastructure.Repositories
 
             return true;
         }
+
+        public async Task<bool> DepositFundsAsync(Guid Customer, long amount)
+        {
+            var customerAccount = await _context.BankAccounts.FirstOrDefaultAsync(ba => ba.CustomerId == Customer);
+            if(customerAccount == null) return false;
+
+            customerAccount.Balance += amount;
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
