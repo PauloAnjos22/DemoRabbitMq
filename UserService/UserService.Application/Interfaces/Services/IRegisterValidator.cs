@@ -5,6 +5,6 @@ namespace UserService.Application.Interfaces.Services
 {
     public interface IRegisterValidator
     {
-        Task <bool> ValidateAsync(CreateCustomerDto response);
+        Task <ResultResponse> ValidateAsync(CreateCustomerDto response);
     }
 }
