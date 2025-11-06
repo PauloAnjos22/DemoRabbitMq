@@ -147,7 +147,7 @@ docker logs -f userservice-container
 
 ### 6. Demonstração
 <div align="center">
-  <img src="./assets/RabbitMQDemonstration.png.png" alt="RabbitMQ broker" width="70%">
+  <img src="./assets/RabbitMQDemonstration.png" alt="RabbitMQ broker" width="70%">
   <br><br>
-  <img src="./assets/Tireshop.png.png" alt="Poatan and Ankalaev" width="70%">
+  <img src="./assets/Tireshop.png" alt="Poatan and Ankalaev" width="70%">
 </div>
