@@ -144,3 +144,10 @@ docker logs -f userservice-container
 1. Acesse [MailTrap](https://mailtrap.io)
 2. Vá para **My Inbox**
 3. Veja os emails de confirmação de pagamento
+
+### 6. Demonstração
+<div align="center">
+  <img src="./assets/RabbitMQDemonstration.png.png" alt="RabbitMQ broker" width="70%">
+  <br><br>
+  <img src="./assets/Tireshop.png.png" alt="Poatan and Ankalaev" width="70%">
+</div>
