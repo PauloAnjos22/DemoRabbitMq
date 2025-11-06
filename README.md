@@ -17,14 +17,14 @@ O sistema processa transações financeiras entre usuários e publica eventos de
 ## Arquitetura
 > Algumas interfaces e métodos foram omitidos para simplificar a visualização e destacar apenas os principais componentes e suas interações.
 
-
-![Domain Layer](./assets/DomainLayer.png)
+[Panoram Geral](./assets/GeneralPanoram.png)
+<!-- ![Domain Layer](./assets/DomainLayer.png)
 
 ![Presentation Layer](./assets/PresentationLayer.png)
 
 ![Application Layer](./assets/ApplicationLayer.png)
 
-![Infrastructure Layer](./assets/InfrastructureLayer.png)
+![Infrastructure Layer](./assets/InfrastructureLayer.png) -->
 
 
 ## Tecnologias Utilizadas
