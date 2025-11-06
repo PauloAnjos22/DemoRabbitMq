@@ -9,8 +9,8 @@ POST {{UserService.API_HostAddress}}/api/customer
 Content-Type: application/json
 
 {
-  "Name": "Seniul Dariush Son",
-  "Email": "renatomoicano@gmail.com"
+  "Name": "Ankalaev Owl Face",
+  "Email": "ankalaev@gmail.com"
 }
 
 ###
@@ -19,9 +19,9 @@ POST {{UserService.API_HostAddress}}/api/payment/new-payment
 Content-Type: application/json
 
 {
-  "From": "DD387216-8B80-441D-B71A-08DE12804329",
-  "To": "E64FBF44-A476-40CF-B719-08DE12804329",
-  "Amount": 500,
+  "From": "60462D3E-664D-4EBA-C902-08DE1CD724B4",
+  "To": "957CBB9E-CD12-408F-C903-08DE1CD724B4",
+  "Amount": 1800,
   "Method": "CreditCard"
 }
 
@@ -31,8 +31,8 @@ POST {{UserService.API_HostAddress}}/api/payment/add-funds
 Content-Type: application/json
 
 {
-  "CustomerId": "E64FBF44-A476-40CF-B719-08DE12804329",
-  "Amount": 500
+  "CustomerId": "60462D3E-664D-4EBA-C902-08DE1CD724B4",
+  "Amount": 5000
 }
 
 ###
