@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using UserService.Application.DTOs.Common;
+using UserService.Application.DTOs.Payment;
 using UserService.Application.Interfaces.Repositories;
 using UserService.Application.Interfaces.Services;
 using UserService.Application.Interfaces.UseCases;
@@ -26,9 +27,9 @@ namespace UserService.Application.UseCases
             _customerAccountValidator = customerAccountValidator;
         }
 
-        public async Task<ResultResponse> DepositFundsAsync(Guid customer, long amount)
+        public async Task<ResultResponse> DepositFundsAsync(CreateDepositRequest request)
         {
-            var validator = await _customerAccountValidator.ValidateAsync( customer );
+            var validator = await _customerAccountValidator.ValidateAsync(request.CustomerId);
             if (!validator.Success)
             {
                 return ResultResponse.Fail(validator.ErrorMessage ?? "Customer account not found");
@@ -37,7 +38,7 @@ namespace UserService.Application.UseCases
 
             try
             {
-                var deposit = await _bankAccountRepository.DepositFundsAsync(customer, amount);
+                var deposit = await _bankAccountRepository.DepositFundsAsync(request.CustomerId, request.Amount);
                 if (!deposit)
                 {
                     await _efUnitOfWork.RollbackTransactionAsync();

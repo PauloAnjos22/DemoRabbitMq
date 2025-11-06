@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UserService.Domain.Events
 {
-    public class TransactionCompletedEvent
+    public class TransactionLoggedEvent
     {
         public Guid TransactionId { get; init; }
         public Guid AccountFrom { get; init; }
@@ -21,7 +21,7 @@ namespace UserService.Domain.Events
         public DateTime CompletedAt { get; init; }
 
 
-        public TransactionCompletedEvent(Guid transactionId, Guid accountFrom, Guid accountTo, long paymentAmount, string currency, string? paymentMethod, string? status, string? failureReason = null)
+        public TransactionLoggedEvent(Guid transactionId, Guid accountFrom, Guid accountTo, long paymentAmount, string currency, string? paymentMethod, string? status, string? failureReason = null)
         {
             TransactionId = transactionId;
             AccountFrom = accountFrom;

@@ -27,6 +27,16 @@ Content-Type: application/json
 
 ###
 
+POST {{UserService.API_HostAddress}}/api/payment/add-funds
+Content-Type: application/json
+
+{
+  "CustomerId": "E64FBF44-A476-40CF-B719-08DE12804329",
+  "Amount": 500
+}
+
+###
+
 GET {{UserService.API_HostAddress}}/api/customer/all
 
 ###

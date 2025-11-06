@@ -1,6 +1,6 @@
 ﻿namespace UserService.Domain.Entities
 {
-    public class AuditLog
+    public class TransactionLog
     {
         public Guid Id { get; set; } 
         public Guid TransactionId { get; set; }

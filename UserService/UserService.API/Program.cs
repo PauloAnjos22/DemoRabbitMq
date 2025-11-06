@@ -6,7 +6,6 @@ using UserService.Application.Interfaces.UseCases;
 using UserService.Application.Mappings;
 using UserService.Application.Services;
 using UserService.Application.UseCases;
-using UserService.Domain.Entities;
 using UserService.Infrastructure.Configuration;
 using UserService.Infrastructure.Messaging.Publishers;
 using UserService.Infrastructure.Persistence;
@@ -40,6 +39,9 @@ builder.Services.AddScoped<IBankAccountService, BankAccountAction>();
 builder.Services.AddScoped<IPaymentEventPublisherService, PaymentEventPublisher>();
 builder.Services.AddScoped<IPaymentValidatorService, PaymentValidator>();
 builder.Services.AddScoped<IRegisterValidator, RegisterValidator>();
+builder.Services.AddScoped<IDepositFunds, DepositFunds>();
+builder.Services.AddScoped<ICustomerAccountValidator, CustomerAccountValidator>();
+
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddAutoMapper(cfg =>

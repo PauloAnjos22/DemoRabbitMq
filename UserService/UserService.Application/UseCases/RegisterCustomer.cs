@@ -38,7 +38,7 @@ namespace UserService.Application.UseCases
         public async Task<ResultResponse> RegisterCustomerAsync(CreateCustomerDto request) 
         {
             var validateRequest = await _registerValidator.ValidateAsync( request );
-            if (!validateRequest)
+            if (!validateRequest.Success)
             {
                 return ResultResponse.Fail("Customer email already exist");
             }

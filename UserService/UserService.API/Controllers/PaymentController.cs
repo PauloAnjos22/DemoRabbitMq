@@ -11,10 +11,14 @@ namespace UserService.API.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly IEventPayment _eventPayment;
+        private readonly IDepositFunds _depositFunds;
 
-        public PaymentController(IEventPayment paymentRepository)
+        public PaymentController(
+            IEventPayment paymentRepository,
+            IDepositFunds depositFunds)
         {
             _eventPayment = paymentRepository;
+            _depositFunds = depositFunds;
         }
 
         [HttpPost("new-payment")]
@@ -33,10 +37,13 @@ namespace UserService.API.Controllers
 
             return Ok();
         }
-        //[HttpPost("add-funds")]
-        //public async Task<ActionResult> DepositFundsAsync(CreateDepositRequest request)
-        //{
-
-        //}
+        [HttpPost("add-funds")]
+        public async Task<ActionResult> DepositFundsAsync(CreateDepositRequest request)
+        {
+            var addDeposit = await _depositFunds.DepositFundsAsync(request);
+            if (!addDeposit.Success) 
+                return BadRequest(addDeposit.ErrorMessage);
+            return Ok();
+        }
     }
 }
