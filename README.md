@@ -19,10 +19,13 @@ O sistema processa transações financeiras entre usuários e publica eventos de
 
 
 <div align="center">
-  <img src="./assets/DomainLayer.png" alt="Domain Layer" width="45%">
-  <img src="./assets/PresentationLayer.png" alt="Presentation Layer" width="45%">
-  <img src="./assets/ApplicationLayer.png" alt="Application Layer" width="45%">
-  <img src="./assets/InfrastructureLayer.png" alt="Infrastructure Layer" width="45%">
+  <img src="./assets/DomainLayer.png" alt="Domain Layer" width="70%">
+  <br><br>
+  <img src="./assets/PresentationLayer.png" alt="Presentation Layer" width="70%">
+  <br><br>
+  <img src="./assets/ApplicationLayer.png" alt="Application Layer" width="70%">
+  <br><br>
+  <img src="./assets/InfrastructureLayer.png" alt="Infrastructure Layer" width="70%">
 </div>
 
 
