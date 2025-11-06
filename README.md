@@ -146,6 +146,10 @@ docker logs -f userservice-container
 3. Veja os emails de confirmação de pagamento
 
 ### 6. Demonstração
+<p>
+No card do UFC 320, o brasileiro Alex Pereira (Poatan) enfrentou o daguestanês Magomed Ankalaev. O clímax do evento foi o trash talk de Ankalaev zombando das origens humildes do brasileiro, que trabalhava em uma borracharia antes de entrar para o mundo do MMA. Após recuperar o cinturão, Poatan "contratou" Ankalaev como seu novo funcionário. As imagens abaixo demonstram o momento em que Poatan realizou o pagamento ao seu mais novo e assíduo colaborador, usando este sistema.
+</p>
+
 <div align="center">
   <img src="./assets/RabbitMQDemonstration.png" alt="RabbitMQ broker" width="70%">
   <br><br>
